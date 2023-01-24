@@ -10,7 +10,8 @@ import { Menu } from '@headlessui/react';
 import 'react-toastify/dist/ReactToastify.css';
 import { Store } from '../utils/Store';
 import DropdownLink from './DropdownLink';
-import { ShoppingCartIcon } from '@heroicons/react/outline';
+import { SearchIcon, ShoppingCartIcon } from '@heroicons/react/outline';
+import { useRouter } from 'next/router';
 
 export default function Layout({ title, children }) {
   const { status, data: session } = useSession();
@@ -26,6 +27,14 @@ export default function Layout({ title, children }) {
     Cookies.remove('cart');
     dispatch({ type: 'CART_RESET' });
     signOut({ callbackUrl: '/login' });
+  };
+
+  const [query, setQuery] = useState('');
+
+  const router = useRouter();
+  const submitHandler = (e) => {
+    e.preventDefault();
+    router.push(`/search?query=${query}`);
   };
 
   return (
@@ -47,6 +56,12 @@ export default function Layout({ title, children }) {
                 Aximart
               </div>
             </Link>
+            <form onSubmit={submitHandler} className="mx-auto  hidden w-full justify-center md:flex">
+              <input onChange={(e) => setQuery(e.target.value)} type="text" className="rounded-tr-none rounded-br-none p-1 text-sm   focus:ring-0" placeholder="Cari produk" />
+              <button className="rounded rounded-tl-none rounded-bl-none bg-amber-300 p-1 text-sm dark:text-black" type="submit" id="button-addon2">
+                <SearchIcon className="h-5 w-5"></SearchIcon>
+              </button>
+            </form>
             <div className="flex items-center">
               <Link href="/cart">
                 <div className="p-2 flex">
