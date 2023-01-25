@@ -56,8 +56,8 @@ export default function Layout({ title, children }) {
                 Aximart
               </div>
             </Link>
-            <form onSubmit={submitHandler} className="mx-auto  hidden w-full justify-center md:flex">
-              <input onChange={(e) => setQuery(e.target.value)} type="text" className="rounded-tr-none rounded-br-none p-1 text-sm   focus:ring-0" placeholder="Cari produk" />
+            <form onSubmit={submitHandler} className="mx-auto w-full justify-center flex">
+              <input onChange={(e) => setQuery(e.target.value)} type="text" className="rounded-tr-none rounded-br-none p-1 text-sm w-24 md:w-48 focus:ring-0" placeholder="Cari produk" />
               <button className="rounded rounded-tl-none rounded-bl-none bg-amber-300 p-1 text-sm dark:text-black" type="submit" id="button-addon2">
                 <SearchIcon className="h-5 w-5"></SearchIcon>
               </button>

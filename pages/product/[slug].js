@@ -41,10 +41,10 @@ export default function ProductScreen(props) {
         <div className="md:col-span-2">
           <Image src={product.image} alt={product.name} width={100} height={100} layout="responsive" className="rounded-md"></Image>
         </div>
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 card">
           <ul className="p-4">
             <li>
-              <h1 className="text-lg">{product.name}</h1>
+              <h1 className="text-lg font-bold">{product.name}</h1>
             </li>
             <li>Kategori: {product.category}</li>
             <li>Merek: {product.brand}</li>
