@@ -42,6 +42,7 @@ export default function PlaceOrderScreen() {
         shippingPrice,
         totalPrice,
       });
+
       setLoading(false);
       dispatch({ type: 'CART_CLEAR_ITEMS' });
       Cookies.set(

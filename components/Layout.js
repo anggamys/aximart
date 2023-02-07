@@ -74,7 +74,7 @@ export default function Layout({ title, children }) {
               ) : session?.user ? (
                 <Menu as="div" className="relative inline-block">
                   <Menu.Button className="">{session.user.name}</Menu.Button>
-                  <Menu.Items className="absolute right-0 w-36 origin-top-right bg-white  shadow-lg p-3 rounded-lg">
+                  <Menu.Items className="absolute right-0 w-44 origin-top-right bg-white  shadow-lg p-3 rounded-lg">
                     <Menu.Item>
                       <DropdownLink className="dropdown-link" href="/profile">
                         Profile

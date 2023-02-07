@@ -1,13 +1,13 @@
-import bcrypt from 'bcryptjs';
+// import bcrypt from 'bcryptjs';
 
 const data = {
   users: [
-    {
-      name: 'Angga',
-      email: 'jstcode.hub@gmail.com',
-      password: bcrypt.hashSync('angga1508'),
-      isAdmin: true,
-    },
+    //   {
+    //     name: 'Angga',
+    //     email: 'jstcode.hub@gmail.com',
+    //     password: bcrypt.hashSync('angga1508'),
+    //     isAdmin: true,
+    //   },
   ],
 
   product: [

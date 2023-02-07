@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React, { useEffect, useReducer } from 'react';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
+import { toast } from 'react-toastify';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -12,6 +13,14 @@ function reducer(state, action) {
       return { ...state, loading: false, orders: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
+    case 'DELETE_REQUEST':
+      return { ...state, loadingDelete: true };
+    case 'DELETE_SUCCESS':
+      return { ...state, loadingDelete: false, successDelete: true };
+    case 'DELETE_FAIL':
+      return { ...state, loadingDelete: false };
+    case 'DELETE_RESET':
+      return { ...state, loadingDelete: false, successDelete: false };
     default:
       state;
   }
@@ -36,6 +45,21 @@ export default function AdminOrderScreen() {
     };
     fetchData();
   }, []);
+
+  const deleteHandler = async (orderId) => {
+    if (!window.confirm('Apakah Kamu yakin?')) {
+      return;
+    }
+    try {
+      dispatch({ type: 'DELETE_REQUEST' });
+      await axios.delete(`/api/admin/orders/${orderId}/deleteOrder`);
+      dispatch({ type: 'DELETE_SUCCESS' });
+      toast.success('Pesanan telah dihapus');
+    } catch (err) {
+      dispatch({ type: 'DELETE_FAIL' });
+      toast.error(getError(err));
+    }
+  };
 
   return (
     <Layout title="Admin Dashboard">
@@ -90,8 +114,11 @@ export default function AdminOrderScreen() {
                       <td className="p-5">{order.isDelivered ? `${order.deliveredAt.substring(0, 10)}` : 'Pesanan sedang dikemas'}</td>
                       <td className="p-5">
                         <Link href={`/order/${order._id}`} passHref>
-                          <div className="primary-button">Detail</div>
+                          <div className="primary-button text-center">Detail</div>
                         </Link>
+                        <button type="button" className="default-button mt-5 w-full" onClick={() => deleteHandler(order._id)}>
+                          Hapus Pesanan
+                        </button>
                       </td>
                     </tr>
                   ))}

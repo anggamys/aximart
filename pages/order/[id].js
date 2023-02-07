@@ -5,6 +5,8 @@ import axios from 'axios';
 import getError from '../../utils/error';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-toastify';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -14,12 +16,34 @@ function reducer(state, action) {
       return { ...state, loading: false, order: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
+    case 'PAY_REQUEST':
+      return { ...state, loadingPay: true };
+    case 'PAY_SUCCESS':
+      return { ...state, loadingPay: false, successPay: true };
+    case 'PAY_FAIL':
+      return { ...state, loadingPay: false, errorPay: action.payload };
+    case 'PAY_RESET':
+      return { ...state, loadingPay: false, successPay: false, errorPay: '' };
+
+    case 'DELIVER_REQUEST':
+      return { ...state, loadingDeliver: true };
+    case 'DELIVER_SUCCESS':
+      return { ...state, loadingDeliver: false, successDeliver: true };
+    case 'DELIVER_FAIL':
+      return { ...state, loadingDeliver: false };
+    case 'DELIVER_RESET':
+      return {
+        ...state,
+        loadingDeliver: false,
+        successDeliver: false,
+      };
     default:
       state;
   }
 }
 
 function OrderScreen() {
+  const { data: session } = useSession();
   const { query } = useRouter();
   const orderId = query.id;
 
@@ -41,6 +65,30 @@ function OrderScreen() {
   }, [order, orderId]);
 
   const { shippingAddress, paymentMethod, orderItems, itemsPrice, shippingPrice, totalPrice, isPaid, paidAt, isDelivered, deliveredAt } = order;
+
+  const updatePayment = async () => {
+    try {
+      dispatch({ type: 'PAY_REQUEST' });
+      const { data } = await axios.put(`/api/orders/${order._id}/pay`);
+      dispatch({ type: 'PAY_SUCCESS', payload: data });
+      toast.success('Pesanan telah dibayar');
+    } catch (err) {
+      dispatch({ type: 'PAY_FAIL', payload: getError(err) });
+      toast.error(getError(err));
+    }
+  };
+
+  const updateDelivered = async () => {
+    try {
+      dispatch({ type: 'DELIVER_REQUEST' });
+      const { data } = await axios.put(`/api/admin/orders/${order._id}/deliver`);
+      dispatch({ type: 'DELIVER_SUCCESS', payload: data });
+      toast.success('Pesanan telah diterima');
+    } catch (err) {
+      dispatch({ type: 'DELIVER_FAIL', payload: getError(err) });
+      toast.error(getError(err));
+    }
+  };
 
   return (
     <Layout title={`Order ${orderId}`}>
@@ -120,6 +168,23 @@ function OrderScreen() {
                 </li>
               </ul>
             </div>
+            {session.user.isAdmin && (
+              <div className="card p-5">
+                <h2 className="text-lg mb-2">Status</h2>
+                <ul>
+                  <li className="mb-2 flex justify-center">
+                    <button onClick={updatePayment} className="bg-green-600 rounded-md p-2 w-full text-white">
+                      Sudah di bayar
+                    </button>
+                  </li>
+                  <li className="mb-2 flex justify-center">
+                    <button onClick={updateDelivered} className="bg-blue-700 rounded-md p-2 w-full text-white">
+                      Pesanan sudah diterima
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       )}
