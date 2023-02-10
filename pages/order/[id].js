@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
 import { useEffect, useReducer } from 'react';
 import axios from 'axios';
-import getError from '../../utils/error';
+import { getError } from '../../utils/error';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
