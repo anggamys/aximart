@@ -255,16 +255,16 @@ export default function AdminProductEditScreen() {
                 />
                 {errors.description && <div className="text-red-500">{errors.description.message}</div>}
               </div>
-              <div className="flex gap-4">
+              <div className="flex flex-row gap-4">
                 <div className="mb-4">
                   <button disabled={loadingUpdate} className="primary-button">
                     {loadingUpdate ? 'Loading' : 'Update'}
                   </button>
                 </div>
                 <div className="mb-4">
-                  <Link href={`/admin/products`} className="default-button">
+                  <button href={`/admin/products`} className="default-button">
                     Kembali
-                  </Link>
+                  </button>
                 </div>
               </div>
             </form>

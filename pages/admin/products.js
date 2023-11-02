@@ -5,6 +5,7 @@ import React, { useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
+import AdminNav from '../../components/adminNav';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -91,79 +92,59 @@ export default function AdminProdcutsScreen() {
   };
   return (
     <Layout title="Admin Products">
-      <div className="grid md:grid-cols-4 md:gap-5">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Pesanan</Link>
-            </li>
-            <li>
-              <Link href="/admin/products">
-                <div className="font-bold">Produk</div>
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/users">Pengguna</Link>
-            </li>
-          </ul>
+      <AdminNav>
+        <div className="flex justify-between">
+          <h1 className="mb-4 text-xl">Produk</h1>
+          {loadingDelete && <div>Menghapus produk...</div>}
+          <button disabled={loadingCreate} onClick={createHandler} className="primary-button">
+            {loadingCreate ? 'Loading' : 'Tambah produk'}
+          </button>
         </div>
-        <div className="overflow-x-auto md:col-span-3">
-          <div className="flex justify-between">
-            <h1 className="mb-4 text-xl">Produk</h1>
-            {loadingDelete && <div>Menghapus produk...</div>}
-            <button disabled={loadingCreate} onClick={createHandler} className="primary-button">
-              {loadingCreate ? 'Loading' : 'Tambah produk'}
-            </button>
-          </div>
-          {loading ? (
-            <div>Loading...</div>
-          ) : error ? (
-            <div className="alert-error">{error}</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="border-b">
-                  <tr>
-                    <th className="px-5 text-left">ID</th>
-                    <th className="p-5 text-left">Nama</th>
-                    <th className="p-5 text-left">Harga</th>
-                    <th className="p-5 text-left">Categori</th>
-                    <th className="p-5 text-left">Jumlah</th>
-                    <th className="p-5 text-left">Rating</th>
-                    <th className="p-5 text-left">Actions</th>
+        {loading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div className="alert-error">{error}</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="border-b">
+                <tr>
+                  <th className="px-5 text-left">ID</th>
+                  <th className="p-5 text-left">Nama</th>
+                  <th className="p-5 text-left">Harga</th>
+                  <th className="p-5 text-left">Categori</th>
+                  <th className="p-5 text-left">Jumlah</th>
+                  <th className="p-5 text-left">Rating</th>
+                  <th className="p-5 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr key={product._id} className="border-b">
+                    <td className=" p-5 ">{product._id.substring(20, 24)}</td>
+                    <td className=" p-5 ">{product.name}</td>
+                    <td className=" p-5 ">Rp.{product.price}</td>
+                    <td className=" p-5 ">{product.category}</td>
+                    <td className=" p-5 ">{product.countInStock}</td>
+                    <td className=" p-5 ">{product.rating}</td>
+                    <td className=" p-5 gap-1 text-center">
+                      <Link href={`/admin/product/${product._id}`}>
+                        <div type="button" className="default-button w-full">
+                          Edit
+                        </div>
+                      </Link>
+                      &nbsp;
+                      <button onClick={() => deleteHandler(product._id)} className="default-button w-full" type="button">
+                        Hapus
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {products.map((product) => (
-                    <tr key={product._id} className="border-b">
-                      <td className=" p-5 ">{product._id.substring(20, 24)}</td>
-                      <td className=" p-5 ">{product.name}</td>
-                      <td className=" p-5 ">Rp.{product.price}</td>
-                      <td className=" p-5 ">{product.category}</td>
-                      <td className=" p-5 ">{product.countInStock}</td>
-                      <td className=" p-5 ">{product.rating}</td>
-                      <td className=" p-5 ">
-                        <Link href={`/admin/product/${product._id}`}>
-                          <div type="button" className="default-button">
-                            Edit
-                          </div>
-                        </Link>
-                        &nbsp;
-                        <button onClick={() => deleteHandler(product._id)} className="default-button" type="button">
-                          Hapus
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </AdminNav>
     </Layout>
   );
 }

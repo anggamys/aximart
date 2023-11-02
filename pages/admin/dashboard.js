@@ -6,6 +6,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import React, { useEffect, useReducer } from 'react';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
+import AdminNav from '../../components/adminNav';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -63,66 +64,46 @@ function AdminDashboardScreen() {
   };
   return (
     <Layout title="Admin Dashboard">
-      <div className="grid  md:grid-cols-4 md:gap-5">
-        <div>
-          <ul>
-            <li>
-              <Link href="/admin/dashboard">
-                <div className="font-bold">Dashboard</div>
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin/orders">Pesanan</Link>
-            </li>
-            <li>
-              <Link href="/admin/products">Produk</Link>
-            </li>
-            <li>
-              <Link href="/admin/users">Pengguna</Link>
-            </li>
-          </ul>
-        </div>
-        <div className="md:col-span-3">
-          <h1 className="mb-4 text-xl">Admin Dashboard</h1>
-          {loading ? (
-            <div>Loading...</div>
-          ) : error ? (
-            <div className="alert-error">{error}</div>
-          ) : (
-            <div>
-              <div className="grid grid-cols-1 md:grid-cols-4">
-                <div className="card m-5 p-5">
-                  <p className="text-3xl">Rp.{summary.ordersPrice} </p>
-                  <p>Penjualan</p>
-                  <Link href="/admin/orders">Lihat Penjualan</Link>
-                </div>
-                <div className="card m-5 p-5">
-                  <p className="text-3xl">{summary.ordersCount} </p>
-                  <p>Pesanan</p>
-                  <Link href="/admin/orders">Lihat Pesanan</Link>
-                </div>
-                <div className="card m-5 p-5">
-                  <p className="text-3xl">{summary.productsCount} </p>
-                  <p>Produk</p>
-                  <Link href="/admin/products">Lihat Produk</Link>
-                </div>
-                <div className="card m-5 p-5">
-                  <p className="text-3xl">{summary.usersCount} </p>
-                  <p>Pengguna</p>
-                  <Link href="/admin/users">Lihat Pengguna</Link>
-                </div>
+      <AdminNav>
+        <h1 className="mb-4 text-xl">Admin Dashboard</h1>
+        {loading ? (
+          <div>Loading...</div>
+        ) : error ? (
+          <div className="alert-error">{error}</div>
+        ) : (
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-4">
+              <div className="card m-5 p-5">
+                <p className="text-3xl">Rp.{summary.ordersPrice} </p>
+                <p>Penjualan</p>
+                <Link href="/admin/orders">Lihat Penjualan</Link>
               </div>
-              <h2 className="text-xl">Informasi Penjualan</h2>
-              <Bar
-                options={{
-                  legend: { display: true, position: 'right' },
-                }}
-                data={data}
-              />
+              <div className="card m-5 p-5">
+                <p className="text-3xl">{summary.ordersCount} </p>
+                <p>Pesanan</p>
+                <Link href="/admin/orders">Lihat Pesanan</Link>
+              </div>
+              <div className="card m-5 p-5">
+                <p className="text-3xl">{summary.productsCount} </p>
+                <p>Produk</p>
+                <Link href="/admin/products">Lihat Produk</Link>
+              </div>
+              <div className="card m-5 p-5">
+                <p className="text-3xl">{summary.usersCount} </p>
+                <p>Pengguna</p>
+                <Link href="/admin/users">Lihat Pengguna</Link>
+              </div>
             </div>
-          )}
-        </div>
-      </div>
+            <h2 className="text-xl">Informasi Penjualan</h2>
+            <Bar
+              options={{
+                legend: { display: true, position: 'right' },
+              }}
+              data={data}
+            />
+          </div>
+        )}
+      </AdminNav>
     </Layout>
   );
 }

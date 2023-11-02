@@ -45,7 +45,7 @@ export default function Layout({ title, children }) {
         <link rel="icon" href="/aximart.png" />
       </Head>
 
-      <ToastContainer position="top-center" limit={1} />
+      <ToastContainer position="top-center" limit={3} />
 
       <div className="flex min-h-screen flex-col justify-between ">
         <header>
