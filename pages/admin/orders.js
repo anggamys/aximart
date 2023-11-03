@@ -4,7 +4,7 @@ import React, { useEffect, useReducer } from 'react';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
 import { toast } from 'react-toastify';
-import AdminNav from '../../components/adminNav';
+import AdminNav from '../../components/AdminNav';
 
 function reducer(state, action) {
   switch (action.type) {
