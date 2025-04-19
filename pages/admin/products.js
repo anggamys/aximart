@@ -1,11 +1,11 @@
 import axios from 'axios';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
 import AdminNav from '../../components/AdminNav';
+import DataTable from '../../components/DataTable';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -29,12 +29,12 @@ function reducer(state, action) {
       return { ...state, loadingDelete: false };
     case 'DELETE_RESET':
       return { ...state, loadingDelete: false, successDelete: false };
-
     default:
-      state;
+      return state;
   }
 }
-export default function AdminProdcutsScreen() {
+
+export default function AdminProductsScreen() {
   const router = useRouter();
 
   const [{ loading, error, products, loadingCreate, successDelete, loadingDelete }, dispatch] = useReducer(reducer, {
@@ -44,7 +44,7 @@ export default function AdminProdcutsScreen() {
   });
 
   const createHandler = async () => {
-    if (!window.confirm('Apakah kamu yakin?')) {
+    if (!window.confirm('Apakah kamu yakin ingin membuat produk baru?')) {
       return;
     }
     try {
@@ -58,6 +58,7 @@ export default function AdminProdcutsScreen() {
       toast.error(getError(err));
     }
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -76,13 +77,13 @@ export default function AdminProdcutsScreen() {
     }
   }, [successDelete]);
 
-  const deleteHandler = async (productId) => {
-    if (!window.confirm('Apakah kamu yakin?')) {
+  const deleteHandler = async (product) => {
+    if (!window.confirm('Apakah kamu yakin ingin menghapus produk ini?')) {
       return;
     }
     try {
       dispatch({ type: 'DELETE_REQUEST' });
-      await axios.delete(`/api/admin/products/${productId}`);
+      await axios.delete(`/api/admin/products/${product._id}`);
       dispatch({ type: 'DELETE_SUCCESS' });
       toast.success('Produk telah berhasil dihapus');
     } catch (err) {
@@ -90,63 +91,55 @@ export default function AdminProdcutsScreen() {
       toast.error(getError(err));
     }
   };
+
+  const columns = [
+    { field: '_id', header: 'ID' },
+    { field: 'name', header: 'Nama' },
+    { field: 'price', header: 'Harga', isPrice: true },
+    { field: 'category', header: 'Kategori' },
+    { field: 'countInStock', header: 'Jumlah' },
+    { field: 'rating', header: 'Rating' },
+  ];
+
+  const actions = [
+    {
+      type: 'link',
+      label: 'Edit',
+      href: (product) => `/admin/product/${product._id}`,
+      className: 'default-button block w-full text-center',
+    },
+    {
+      type: 'button',
+      label: 'Hapus',
+      onClick: deleteHandler,
+      disabled: loadingDelete,
+      className: 'default-button block w-full',
+    },
+  ];
+
   return (
-    <Layout title="Admin Products">
+    <Layout title="Admin Produk">
       <AdminNav>
-        <div className="flex justify-between">
-          <h1 className="mb-4 text-xl">Produk</h1>
-          {loadingDelete && <div>Menghapus produk...</div>}
-          <button disabled={loadingCreate} onClick={createHandler} className="primary-button">
-            {loadingCreate ? 'Loading' : 'Tambah produk'}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Produk</h1>
+            <p className="text-gray-600 mt-1">Kelola semua produk toko</p>
+          </div>
+          <button disabled={loadingCreate} onClick={createHandler} className="primary-button mt-3 sm:mt-0">
+            {loadingCreate ? 'Loading...' : 'Tambah Produk'}
           </button>
         </div>
-        {loading ? (
-          <div>Loading...</div>
-        ) : error ? (
-          <div className="alert-error">{error}</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="border-b">
-                <tr>
-                  <th className="px-5 text-left">ID</th>
-                  <th className="p-5 text-left">Nama</th>
-                  <th className="p-5 text-left">Harga</th>
-                  <th className="p-5 text-left">Categori</th>
-                  <th className="p-5 text-left">Jumlah</th>
-                  <th className="p-5 text-left">Rating</th>
-                  <th className="p-5 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product) => (
-                  <tr key={product._id} className="border-b">
-                    <td className=" p-5 ">{product._id.substring(20, 24)}</td>
-                    <td className=" p-5 ">{product.name}</td>
-                    <td className=" p-5 ">Rp.{product.price}</td>
-                    <td className=" p-5 ">{product.category}</td>
-                    <td className=" p-5 ">{product.countInStock}</td>
-                    <td className=" p-5 ">{product.rating}</td>
-                    <td className=" p-5 gap-1 text-center">
-                      <Link href={`/admin/product/${product._id}`}>
-                        <div type="button" className="default-button w-full">
-                          Edit
-                        </div>
-                      </Link>
-                      &nbsp;
-                      <button onClick={() => deleteHandler(product._id)} className="default-button w-full" type="button">
-                        Hapus
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+        {loadingDelete && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded" role="alert">
+            <p>Sedang menghapus produk...</p>
           </div>
         )}
+
+        <DataTable columns={columns} data={products} loading={loading} error={error} actions={actions} loadingMessage="Memuat daftar produk..." emptyMessage="Tidak ada produk yang ditemukan" />
       </AdminNav>
     </Layout>
   );
 }
 
-AdminProdcutsScreen.auth = { adminOnly: true };
+AdminProductsScreen.auth = { adminOnly: true };

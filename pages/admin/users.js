@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import Layout from '../../components/Layout';
 import { getError } from '../../utils/error';
 import AdminNav from '../../components/AdminNav';
+import DataTable from '../../components/DataTable';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -13,7 +14,6 @@ function reducer(state, action) {
       return { ...state, loading: false, users: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
-
     case 'DELETE_REQUEST':
       return { ...state, loadingDelete: true };
     case 'DELETE_SUCCESS':
@@ -51,13 +51,13 @@ function AdminUsersScreen() {
     }
   }, [successDelete]);
 
-  const deleteHandler = async (userId) => {
-    if (!window.confirm('Apakah kamu yakin?')) {
+  const deleteHandler = async (user) => {
+    if (!window.confirm(`Apakah kamu yakin ingin menghapus pengguna "${user.name}"?`)) {
       return;
     }
     try {
       dispatch({ type: 'DELETE_REQUEST' });
-      await axios.delete(`/api/admin/users/${userId}`);
+      await axios.delete(`/api/admin/users/${user._id}`);
       dispatch({ type: 'DELETE_SUCCESS' });
       toast.success('Pengguna telah berhasil dihapus');
     } catch (err) {
@@ -66,51 +66,44 @@ function AdminUsersScreen() {
     }
   };
 
+  const columns = [
+    { field: '_id', header: 'ID' },
+    { field: 'name', header: 'Nama' },
+    { field: 'email', header: 'Email' },
+    { field: 'isAdmin', header: 'Admin' },
+  ];
+
+  const actions = [
+    /*{
+      type: 'link',
+      label: 'Edit',
+      href: (user) => `/admin/user/${user._id}`,
+      className: 'default-button block w-full text-center'
+    },*/
+    {
+      type: 'button',
+      label: loadingDelete ? 'Menghapus...' : 'Hapus',
+      onClick: deleteHandler,
+      disabled: loadingDelete,
+      className: 'default-button block w-full',
+    },
+  ];
+
   return (
-    <Layout title="Pengguna">
+    <Layout title="Admin Pengguna">
       <AdminNav>
-        <h1 className="mb-4 text-xl">Pengguna</h1>
-        {loadingDelete && <div>Menghapus...</div>}
-        {loading ? (
-          <div>Loading...</div>
-        ) : error ? (
-          <div className="alert-error">{error}</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="border-b">
-                <tr>
-                  <th className="px-5 text-left">ID</th>
-                  <th className="p-5 text-left">Nama</th>
-                  <th className="p-5 text-left">Email</th>
-                  <th className="p-5 text-left">Admin</th>
-                  <th className="p-5 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user._id} className="border-b">
-                    <td className=" p-5 ">{user._id.substring(20, 24)}</td>
-                    <td className=" p-5 ">{user.name}</td>
-                    <td className=" p-5 ">{user.email}</td>
-                    <td className=" p-5 ">{user.isAdmin ? 'Ya' : 'Tidak'}</td>
-                    <td className=" p-5 ">
-                      {/* <Link href={`/admin/user/${user._id}`} passHref>
-                          <div type="button" className="default-button">
-                            Edit
-                          </div>
-                        </Link> */}
-                      &nbsp;
-                      <button type="button" className="default-button" onClick={() => deleteHandler(user._id)}>
-                        Hapus
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">Pengguna</h1>
+          <p className="text-gray-600 mt-1">Kelola semua pengguna terdaftar</p>
+        </div>
+
+        {loadingDelete && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded" role="alert">
+            <p>Sedang menghapus pengguna...</p>
           </div>
         )}
+
+        <DataTable columns={columns} data={users} loading={loading} error={error} actions={actions} loadingMessage="Memuat daftar pengguna..." emptyMessage="Tidak ada pengguna yang ditemukan" />
       </AdminNav>
     </Layout>
   );
