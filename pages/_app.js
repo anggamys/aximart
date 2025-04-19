@@ -1,5 +1,6 @@
 import { SessionProvider, useSession } from 'next-auth/react';
 import '../styles/globals.css';
+// import '../styles/index.js';
 import { StoreProvider } from '../utils/Store';
 import { useRouter } from 'next/router';
 

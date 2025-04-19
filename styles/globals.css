@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* @import 'swiper/swiper-bundle.min.css'; */
+@import './output.css'; /* Assuming you have Tailwind CSS or other styles here */
+
 .card {
   @apply mb-5 block rounded-lg border border-gray-200 shadow-md;
 }

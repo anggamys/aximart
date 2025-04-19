@@ -26,7 +26,8 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.42.1",
-    "react-toastify": "^9.1.1"
+    "react-toastify": "^9.1.1",
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
